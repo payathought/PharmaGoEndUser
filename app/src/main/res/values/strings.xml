@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Pharma Go</string>
+    <string name="COLLECTION_USER_INFORMATION">User Information</string>
+    <string name="COLLECTION_ADMIN_INFORMATION">Admin Information</string>
+    <string name="COLLECTION_MEDICINELIST">Medicine List</string>
+    <string name="FIRSTNAME">First Name</string>
+    <string name="LASTNAME">Last Name</string>
+    <string name="USERNAME">Username</string>
+    <string name="PHONENUMBER">Phone Number</string>
+    <string name="USER_ID">User_Id</string>
+    <string name="USERPREF">User Session</string>
+    <string name="medecine_list">Medecine List</string>
+    <string name="order_list">Order List</string>
+    <string name="USER_TYPE">User_Type</string>
+    <string name="my_order_list">My Order List</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="COLLECTION_ORDERLIST">Order List</string>
+    <string name="order_logs">Order Logs</string>
+    <string name="done">Done</string>
+    <string name="logout">Logout</string>
+    <string name="pharmacy_list">Pharmacy List</string>
+    <string name="COLLECTION_PHARMACYLIST">Pharmacy List</string>
+
+
+</resources>
