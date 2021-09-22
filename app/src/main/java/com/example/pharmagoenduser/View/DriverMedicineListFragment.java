@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.pharmagoenduser.Adapter.DriverOrderMedicineListAdapter;
 import com.example.pharmagoenduser.Model.MedicineModel;
+import com.example.pharmagoenduser.Model.MyOrderModel;
 import com.example.pharmagoenduser.Model.OrderModel;
 import com.example.pharmagoenduser.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +37,7 @@ public class DriverMedicineListFragment extends Fragment {
 
 
     private View view;
-    private ArrayList<OrderModel> mOrderModel;
+    private ArrayList<MyOrderModel> mOrderModel;
     private static final String TAG = "OrderListFragment";
     FirebaseUser user;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -63,7 +65,7 @@ public class DriverMedicineListFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         mOrderModel = new ArrayList<>();
         progressDialog = new ProgressDialog(getContext());
-        progressDialog.setTitle("Signing Up");
+        progressDialog.setTitle("Pharma GO");
         progressDialog.setMessage("It will take a moment");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
@@ -72,26 +74,22 @@ public class DriverMedicineListFragment extends Fragment {
         iv_empty = view.findViewById(R.id.iv_empty);
         parent_layout = view.findViewById(R.id.parent_layout);
 
-        db.collection(getString(R.string.COLLECTION_ORDERLIST))
+        db.collection(getString(R.string.COLLECTION_MY_ORDERLIST))
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
                         mOrderModel.clear();
                         for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments())
                         {
+                            MyOrderModel orderModel = document.toObject(MyOrderModel.class);
 
-                            if ((document.get("driver_status").toString().equals("pending") && document.get("status").toString().equals("accepted"))) {
-                                OrderModel orderModel = document.toObject(OrderModel.class);
-//                                orderModel.setOrder_id(document.getId());
-//                                orderModel.setMedicine_id(document.get("medicine_id").toString());
-//                                orderModel.setMedecine_name(document.get("medecine_name").toString());
-//                                orderModel.setMedecine_price(document.get("medecine_price").toString());
-//                                orderModel.setDriver_status(document.get("driver_status").toString());
-//                                orderModel.setUser_id(document.get("user_id").toString());
-//                                orderModel.setDriver_id(document.get("driver_id").toString());
-//                                orderModel.setStatus(document.get("status").toString());
-//                                orderModel.setPaymant_method(document.get("paymant_method").toString());
+                            orderModel.setMyOrder_id(document.getId());
+                            if ((orderModel.getDriver_status().equals("pending")
+                                    && orderModel.getStatus().equals("accepted"))) {
+                                Log.d(TAG, "Pasok sa condition: ");
+
                                 mOrderModel.add(orderModel);
+
                             }
                         }
 
@@ -110,8 +108,51 @@ public class DriverMedicineListFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                         rv_driverMedecineList.setAdapter(adapter);
 
+
+
                     }
                 });
+
+//        db.collection(getString(R.string.COLLECTION_ORDERLIST))
+//                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+//                        mOrderModel.clear();
+//                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments())
+//                        {
+//
+//                            if ((document.get("driver_status").toString().equals("pending") && document.get("status").toString().equals("accepted"))) {
+//                                OrderModel orderModel = document.toObject(OrderModel.class);
+////                                orderModel.setOrder_id(document.getId());
+////                                orderModel.setMedicine_id(document.get("medicine_id").toString());
+////                                orderModel.setMedecine_name(document.get("medecine_name").toString());
+////                                orderModel.setMedecine_price(document.get("medecine_price").toString());
+////                                orderModel.setDriver_status(document.get("driver_status").toString());
+////                                orderModel.setUser_id(document.get("user_id").toString());
+////                                orderModel.setDriver_id(document.get("driver_id").toString());
+////                                orderModel.setStatus(document.get("status").toString());
+////                                orderModel.setPaymant_method(document.get("paymant_method").toString());
+//                                mOrderModel.add(orderModel);
+//                            }
+//                        }
+//
+//                        if(mOrderModel.size() == 0){
+//                            iv_empty.setVisibility(View.VISIBLE);
+//                            rv_driverMedecineList.setVisibility(View.GONE);
+//                            parent_layout.setBackgroundColor(Color.parseColor("#255265"));
+//
+//                        }else {
+//                            iv_empty.setVisibility(View.GONE);
+//                            rv_driverMedecineList.setVisibility(View.VISIBLE);
+//                            parent_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+//                        }
+//
+//                        DriverOrderMedicineListAdapter adapter = new DriverOrderMedicineListAdapter(getContext(), mOrderModel);
+//                        adapter.notifyDataSetChanged();
+//                        rv_driverMedecineList.setAdapter(adapter);
+//
+//                    }
+//                });
 
         return view;
     }

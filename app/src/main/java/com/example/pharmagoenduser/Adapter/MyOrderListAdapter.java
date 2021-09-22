@@ -9,13 +9,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pharmagoenduser.Model.MyOrderModel;
 import com.example.pharmagoenduser.Model.OrderModel;
 import com.example.pharmagoenduser.Model.PharmacyModel;
 import com.example.pharmagoenduser.OrderMedicineActivity;
 import com.example.pharmagoenduser.R;
+import com.example.pharmagoenduser.View.Dialog.OrderCanceledDialog;
+import com.example.pharmagoenduser.View.Dialog.ViewUserInfoDialog;
+import com.example.pharmagoenduser.View.ViewOrderActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,11 +31,11 @@ import java.util.ArrayList;
 
 public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.ViewHolder>  {
     private Context mContext;
-    ArrayList<OrderModel> mOrderModel = new ArrayList();
+    ArrayList<MyOrderModel> mOrderModel = new ArrayList();
     private static final String TAG = "MedicineListAdapter";
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public MyOrderListAdapter(Context mContext, ArrayList<OrderModel> mOrderModel) {
+    public MyOrderListAdapter(Context mContext, ArrayList<MyOrderModel> mOrderModel) {
         this.mContext = mContext;
         this.mOrderModel = mOrderModel;
     }
@@ -47,7 +52,7 @@ public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.
     @Override
     public void onBindViewHolder(@NonNull MyOrderListAdapter.ViewHolder holder, int position) {
 
-        OrderModel orderModel = mOrderModel.get(position);
+        MyOrderModel orderModel = mOrderModel.get(position);
 
         db.collection(mContext.getString(R.string.COLLECTION_PHARMACYLIST))
                 .get()
@@ -61,22 +66,19 @@ public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.
                                 if(document.getId().equals(orderModel.getPharmacy_id())){
                                     Log.d(TAG, "onComplete: on DB inside if");
                                     PharmacyModel pharmacyModel = document.toObject(PharmacyModel.class);
-                                    holder.tv_medName.setText(orderModel.getMedecine_name());
-                                    holder.tv_price.setText("₱"+orderModel.getMedecine_price());
                                     holder.tv_orderStatus.setText(orderModel.getStatus().toUpperCase());
                                     holder.tv_pharmaName.setText(pharmacyModel.getPharmacy_name());
-                                    holder.tv_quantity.setText(orderModel.getQuantity());
+                                    holder.tv_medName.setText("Order Id: " + orderModel.getMyOrder_id());
 
 
-                                    if(orderModel.getPaymant_method().equals("cod")){
+
+                                    if(orderModel.getPayment_method().equals("cod")){
                                         holder.tv_payment_method.setText("COD");
 
                                     }else {
                                         holder.tv_payment_method.setText("Paid");
 
                                     }
-
-
 
                                 }
                             }
@@ -87,7 +89,20 @@ public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.
                 });
 
 
+        holder.parent_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(orderModel.getStatus().equals("cancel")){
+                    OrderCanceledDialog dialog = new OrderCanceledDialog();
+                    dialog.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "PharmaGo");
+                }else{
+                    Intent i = new Intent(mContext, ViewOrderActivity.class);
+                    i.putExtra("order_id", orderModel.getMyOrder_id());
+                    mContext.startActivity(i);
+                }
 
+            }
+        });
 
 
 
@@ -104,19 +119,17 @@ public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.
 
 
         ConstraintLayout parent_layout;
-        TextView tv_pharmaName,tv_price,tv_driverStatus,tv_payment_method,tv_medName,tv_orderStatus,tv_quantity;
+        TextView tv_pharmaName,tv_payment_method,tv_orderStatus,tv_medName;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tv_price = itemView.findViewById(R.id.tv_price);
             tv_orderStatus = itemView.findViewById(R.id.tv_orderStatus);
             tv_pharmaName = itemView.findViewById(R.id.tv_pharmaName);
-            tv_medName = itemView.findViewById(R.id.tv_medName);
             tv_payment_method = itemView.findViewById(R.id.tv_payment_method);
+            tv_medName = itemView.findViewById(R.id.tv_medName);
             parent_layout = itemView.findViewById(R.id.parent_layout);
-            tv_driverStatus = itemView.findViewById(R.id.tv_driverStatus);
-            tv_quantity = itemView.findViewById(R.id.tv_quantity);
+
 
 
 

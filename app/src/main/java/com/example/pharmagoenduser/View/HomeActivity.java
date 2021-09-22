@@ -1,6 +1,7 @@
 package com.example.pharmagoenduser.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -14,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +28,12 @@ import com.example.pharmagoenduser.View.Dialog.ViewUserInfoInToolBarDialog;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.protobuf.StringValue;
 
 import es.dmoral.toasty.Toasty;
 
@@ -32,13 +41,15 @@ public class HomeActivity extends AppCompatActivity {
     BottomNavigationView bottomNav;
     Toolbar toolbar;
     TextView txtUserToolbar;
+    Button btn_cart;
+    ImageView iv_cart;
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     FunctionMethod functionMethod = new FunctionMethod();
 
     FirebaseAuth mFirebaseAuth;
     FirebaseUser firebaseUser;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private static final String TAG = "HomeActivity";
 
@@ -50,6 +61,8 @@ public class HomeActivity extends AppCompatActivity {
 
         bottomNav = findViewById(R.id.bottomNav);
         toolbar  = findViewById(R.id.toolBar);
+        btn_cart  = findViewById(R.id.btn_cart);
+        iv_cart  = findViewById(R.id.iv_cart);
         txtUserToolbar  = findViewById(R.id.txtUserToolbar);
         mFirebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = mFirebaseAuth.getCurrentUser();
@@ -80,6 +93,35 @@ public class HomeActivity extends AppCompatActivity {
                 dialog.show(getSupportFragmentManager(), "PharmaGo");
             }
         });
+
+        db.collection(getString(R.string.COLLECTION_CART))
+                .whereEqualTo("user_id",firebaseUser.getUid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable  QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                         if(queryDocumentSnapshots.getDocuments().size() == 0){
+                             btn_cart.setVisibility(View.GONE);
+                         }else {
+                             btn_cart.setVisibility(View.VISIBLE);
+                             btn_cart.setText(String.valueOf(queryDocumentSnapshots.getDocuments().size()));
+                        }
+
+                    }
+                });
+
+        btn_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this,MyCartActivity.class));
+            }
+        });
+        iv_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this,MyCartActivity.class));
+            }
+        });
+
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navlistener =

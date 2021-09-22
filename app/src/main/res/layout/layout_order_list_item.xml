@@ -31,28 +31,16 @@
                 android:id="@+id/tv_pharmaName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="124dp"
                 android:fontFamily="@font/gothambold"
+                android:gravity="center"
                 android:text="South Star Drug"
                 android:textColor="#013263"
                 android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_price"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="150dp"
-                android:fontFamily="@font/gothammedium"
-                android:text="P12"
-                android:textColor="#013263"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_payment_method"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_payment_method" />
-
 
 
             <TextView
@@ -60,39 +48,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
-                android:text="Pending"
-                android:visibility="gone"
                 android:fontFamily="@font/gothambold"
+                android:text="Pending"
                 android:textColor="#013263"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_price"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_pharmaName" />
 
-
-
-            <TextView
-                android:id="@+id/tv_quantity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="@font/gothammedium"
-                android:text="1"
-                android:textColor="#013263"
-                app:layout_constraintStart_toStartOf="@+id/tv_pharmaName"
-                app:layout_constraintTop_toBottomOf="@+id/tv_pharmaName" />
 
             <TextView
                 android:id="@+id/tv_medName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:fontFamily="@font/gothambold"
                 android:text="Tiki-tiki"
                 android:textColor="#013263"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_quantity"
-                app:layout_constraintEnd_toStartOf="@+id/tv_payment_method"
-                app:layout_constraintStart_toEndOf="@+id/tv_quantity"
-                app:layout_constraintTop_toTopOf="@+id/tv_quantity" />
+                android:textSize="10sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_pharmaName" />
 
             <TextView
                 android:id="@+id/tv_payment_method"
@@ -102,22 +76,23 @@
                 android:text="COD"
                 android:textColor="#013263"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_medName"
-                app:layout_constraintEnd_toStartOf="@+id/tv_price"
-                app:layout_constraintStart_toEndOf="@+id/tv_medName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/tv_orderStatus"
                 app:layout_constraintTop_toTopOf="@+id/tv_medName"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="1.0" />
 
             <TextView
                 android:id="@+id/tv_orderStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="32dp"
+                android:layout_marginStart="8dp"
                 android:fontFamily="@font/gothammedium"
                 android:text="DONE"
                 android:textColor="#013263"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_pharmaName"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

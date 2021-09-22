@@ -220,4 +220,11 @@ public class MainActivity extends AppCompatActivity {
         moveTaskToBack(true);
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        functionMethod.callPermission(getApplicationContext());
+        functionMethod.sendSMSPermission(getApplicationContext());
+    }
 }

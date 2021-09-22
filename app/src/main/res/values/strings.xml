@@ -17,11 +17,14 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="COLLECTION_ORDERLIST">Order List</string>
+    <string name="COLLECTION_MY_ORDERLIST">My Order List</string>
+    <string name="COLLECTION_MY_ORDERLIST_ITEMS">My Order List Items</string>
     <string name="order_logs">Order Logs</string>
     <string name="done">Done</string>
     <string name="logout">Logout</string>
     <string name="pharmacy_list">Pharmacy List</string>
     <string name="COLLECTION_PHARMACYLIST">Pharmacy List</string>
+    <string name="COLLECTION_CART">Cart</string>
 
 
 </resources>

@@ -27,14 +27,16 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
-
+import com.google.firebase.firestore.EventListener;
 import java.util.ArrayList;
 
 
 public class PharmacyListFragment extends Fragment {
 
     View view;
+
 
     private ArrayList<PharmacyModel> mPharmacyModel;
 
@@ -47,6 +49,7 @@ public class PharmacyListFragment extends Fragment {
     ImageView iv_empty;
     TextView tv_empty;
     ConstraintLayout parent_layout;
+    ListenerRegistration eventListener;
     private static final String TAG = "PharmacyListFragment";
     public PharmacyListFragment() {
         // Required empty public constructor
@@ -78,40 +81,49 @@ public class PharmacyListFragment extends Fragment {
         iv_empty =  view.findViewById(R.id.iv_empty);
         parent_layout =  view.findViewById(R.id.parent_layout);
 
-        db.collection(getString(R.string.COLLECTION_PHARMACYLIST))
+
+        getPharmaList();
+
+        return view;
+    }
+
+    public void getPharmaList(){
+        eventListener =   db.collection(getString(R.string.COLLECTION_PHARMACYLIST))
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         mPharmacyModel.clear();
-                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments())
-                        {
-                            PharmacyModel pharmacyModel = new PharmacyModel();
-                            pharmacyModel.setPharmacy_id(document.getId());
-                            pharmacyModel.setPharmacy_name(document.get("pharmacy_name").toString());
-                            pharmacyModel.setPharmacy_address(document.get("pharmacy_address").toString());
-                            mPharmacyModel.add(pharmacyModel);
+
+                        if(queryDocumentSnapshots != null){
+                            for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments())
+                            {
+                                PharmacyModel pharmacyModel = new PharmacyModel();
+                                pharmacyModel.setPharmacy_id(document.getId());
+                                pharmacyModel.setPharmacy_name(document.get("pharmacy_name").toString());
+                                pharmacyModel.setPharmacy_address(document.get("pharmacy_address").toString());
+                                mPharmacyModel.add(pharmacyModel);
 
 
+                            }
+                            if(mPharmacyModel.size() == 0){
+                                iv_empty.setVisibility(View.VISIBLE);
+                                tv_empty.setVisibility(View.VISIBLE);
+                                rv_pharmacyList.setVisibility(View.GONE);
+                                parent_layout.setBackgroundColor(Color.parseColor("#255265"));
+
+                            }else {
+                                iv_empty.setVisibility(View.GONE);
+                                tv_empty.setVisibility(View.GONE);
+                                rv_pharmacyList.setVisibility(View.VISIBLE);
+                                parent_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                            }
+                            PharmacyListAdapter pharmacyListAdapter = new PharmacyListAdapter(getContext(), mPharmacyModel);
+                            rv_pharmacyList.setAdapter(pharmacyListAdapter);
                         }
 
-                        if(mPharmacyModel.size() == 0){
-                            iv_empty.setVisibility(View.VISIBLE);
-                            tv_empty.setVisibility(View.VISIBLE);
-                            rv_pharmacyList.setVisibility(View.GONE);
-                            parent_layout.setBackgroundColor(Color.parseColor("#255265"));
 
-                        }else {
-                            iv_empty.setVisibility(View.GONE);
-                            tv_empty.setVisibility(View.GONE);
-                            rv_pharmacyList.setVisibility(View.VISIBLE);
-                            parent_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                        }
-                        PharmacyListAdapter pharmacyListAdapter = new PharmacyListAdapter(getContext(), mPharmacyModel);
-                        rv_pharmacyList.setAdapter(pharmacyListAdapter);
+
                     }
                 });
-
-
-        return view;
     }
 }

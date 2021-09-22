@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +41,9 @@ public class DriverHomeActivity extends AppCompatActivity {
     FirebaseAuth mFirebaseAuth;
     FirebaseUser firebaseUser;
 
+    Button btn_cart;
+    ImageView iv_cart;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,8 @@ public class DriverHomeActivity extends AppCompatActivity {
         bottomNavDriver = findViewById(R.id.bottomNavDriver);
 
         toolbar  = findViewById(R.id.toolBar);
+        btn_cart  = findViewById(R.id.btn_cart);
+        iv_cart  = findViewById(R.id.iv_cart);
         txtUserToolbar  = findViewById(R.id.txtUserToolbar);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -63,6 +70,9 @@ public class DriverHomeActivity extends AppCompatActivity {
         }else{
             txtUserToolbar.setText(sharedpreferences.getAll().get(getString(R.string.USERNAME)).toString());
         }
+
+        btn_cart.setVisibility(View.GONE);
+        iv_cart.setVisibility(View.GONE);
 
         txtUserToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,6 +156,8 @@ public class DriverHomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        functionMethod.sendSMSPermission(getApplicationContext());
+        functionMethod.callPermission(getApplicationContext());
         if (sharedpreferences.getAll().isEmpty())
         {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));

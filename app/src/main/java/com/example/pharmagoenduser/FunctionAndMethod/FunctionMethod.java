@@ -150,8 +150,8 @@ public class FunctionMethod extends Activity {
         return have_MobileData || have_WIFI;
     }
 
-    public void locationPermission(Activity activity) {
-        Dexter.withActivity(activity)
+    public void locationPermission(Context activity) {
+        Dexter.withContext(activity)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
                     @Override
@@ -171,8 +171,8 @@ public class FunctionMethod extends Activity {
                 }).check();
     }
 
-    public void callPermission(Activity activity) {
-        Dexter.withActivity(activity)
+    public void callPermission(Context activity) {
+        Dexter.withContext(activity)
                 .withPermission(Manifest.permission.CALL_PHONE)
                 .withListener(new PermissionListener() {
                     @Override
@@ -193,8 +193,8 @@ public class FunctionMethod extends Activity {
 
     }
 
-    public void sendSMSPermission(Activity activity) {
-        Dexter.withActivity(activity)
+    public void sendSMSPermission(Context activity) {
+        Dexter.withContext(activity)
                 .withPermission(Manifest.permission.SEND_SMS)
                 .withListener(new PermissionListener() {
                     @Override

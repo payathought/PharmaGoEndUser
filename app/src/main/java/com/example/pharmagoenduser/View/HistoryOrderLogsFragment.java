@@ -17,6 +17,8 @@ import android.widget.ImageView;
 
 import com.example.pharmagoenduser.Adapter.DriverOrderMedicineListAdapter;
 import com.example.pharmagoenduser.Adapter.HistoryLogsAdapter;
+import com.example.pharmagoenduser.FunctionAndMethod.FunctionMethod;
+import com.example.pharmagoenduser.Model.MyOrderModel;
 import com.example.pharmagoenduser.Model.OrderModel;
 import com.example.pharmagoenduser.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,7 +34,7 @@ import java.util.ArrayList;
 
 public class HistoryOrderLogsFragment extends Fragment {
     private View view;
-    private ArrayList<OrderModel> mOrderModel;
+    private ArrayList<MyOrderModel> mOrderModel;
     private static final String TAG = "OrderListFragment";
     FirebaseUser user;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -42,6 +44,7 @@ public class HistoryOrderLogsFragment extends Fragment {
     ConstraintLayout parent_layout;
     FirebaseAuth mFirebaseAuth;
     FirebaseUser firebaseUser;
+    FunctionMethod functionMethod = new FunctionMethod();
     public HistoryOrderLogsFragment() {
         // Required empty public constructor
     }
@@ -61,7 +64,7 @@ public class HistoryOrderLogsFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         mOrderModel = new ArrayList<>();
         progressDialog = new ProgressDialog(getContext());
-        progressDialog.setTitle("Signing Up");
+        progressDialog.setTitle("Pharma GO");
         progressDialog.setMessage("It will take a moment");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
@@ -70,31 +73,25 @@ public class HistoryOrderLogsFragment extends Fragment {
         parent_layout = view.findViewById(R.id.parent_layout);
         mFirebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = mFirebaseAuth.getCurrentUser();
-        db.collection(getString(R.string.COLLECTION_ORDERLIST))
+
+        functionMethod.callPermission(getActivity());
+        functionMethod.sendSMSPermission(getActivity());
+
+        db.collection(getString(R.string.COLLECTION_MY_ORDERLIST))
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
                         mOrderModel.clear();
                         for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments())
                         {
+                            MyOrderModel orderModel = document.toObject(MyOrderModel.class);
+                            orderModel.setMyOrder_id(document.getId());
+                            if ((orderModel.getDriver_status().equals("accepted")) && firebaseUser.getUid().equals(orderModel.getDriver_id())) {
 
-                            if ((document.get("driver_status").toString().equals("accepted"))) {
-                                OrderModel orderModel = document.toObject(OrderModel.class);
-//                                orderModel.setOrder_id(document.getId());
-//                                orderModel.setMedicine_id(document.get("medicine_id").toString());
-//                                orderModel.setMedecine_name(document.get("medecine_name").toString());
-//                                orderModel.setMedecine_price(document.get("medecine_price").toString());
-//                                orderModel.setDriver_status(document.get("driver_status").toString());
-//                                orderModel.setUser_id(document.get("user_id").toString());
-//                                orderModel.setDriver_id(document.get("driver_id").toString());
-//                                orderModel.setStatus(document.get("status").toString());
-
-                                if(firebaseUser.getUid().equals(orderModel.getDriver_id())){
-                                    mOrderModel.add(orderModel);
-                                }
-
+                                mOrderModel.add(orderModel);
                             }
                         }
+
                         if(mOrderModel.size() == 0){
                             iv_empty.setVisibility(View.VISIBLE);
                             rv_historylogs.setVisibility(View.GONE);
@@ -111,9 +108,104 @@ public class HistoryOrderLogsFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                         rv_historylogs.setAdapter(adapter);
 
+
                     }
                 });
 
+//        db.collection(getString(R.string.COLLECTION_ORDERLIST))
+//                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+//                        mOrderModel.clear();
+//                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments())
+//                        {
+//
+//                            if ((document.get("driver_status").toString().equals("accepted"))) {
+//                                OrderModel orderModel = document.toObject(OrderModel.class);
+////                                orderModel.setOrder_id(document.getId());
+////                                orderModel.setMedicine_id(document.get("medicine_id").toString());
+////                                orderModel.setMedecine_name(document.get("medecine_name").toString());
+////                                orderModel.setMedecine_price(document.get("medecine_price").toString());
+////                                orderModel.setDriver_status(document.get("driver_status").toString());
+////                                orderModel.setUser_id(document.get("user_id").toString());
+////                                orderModel.setDriver_id(document.get("driver_id").toString());
+////                                orderModel.setStatus(document.get("status").toString());
+//
+//                                if(firebaseUser.getUid().equals(orderModel.getDriver_id())){
+//                                    mOrderModel.add(orderModel);
+//                                }
+//
+//                            }
+//                        }
+//                        if(mOrderModel.size() == 0){
+//                            iv_empty.setVisibility(View.VISIBLE);
+//                            rv_historylogs.setVisibility(View.GONE);
+//                            parent_layout.setBackgroundColor(Color.parseColor("#255265"));
+//
+//                        }else {
+//                            iv_empty.setVisibility(View.GONE);
+//                            rv_historylogs.setVisibility(View.VISIBLE);
+//                            parent_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+//                        }
+//
+//
+//                        HistoryLogsAdapter adapter = new HistoryLogsAdapter(getContext(), mOrderModel);
+//                        adapter.notifyDataSetChanged();
+//                        rv_historylogs.setAdapter(adapter);
+//
+//                    }
+//                });
+//        db.collection(getString(R.string.COLLECTION_ORDERLIST))
+//                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+//                        mOrderModel.clear();
+//                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments())
+//                        {
+//
+//                            if ((document.get("driver_status").toString().equals("accepted"))) {
+//                                OrderModel orderModel = document.toObject(OrderModel.class);
+////                                orderModel.setOrder_id(document.getId());
+////                                orderModel.setMedicine_id(document.get("medicine_id").toString());
+////                                orderModel.setMedecine_name(document.get("medecine_name").toString());
+////                                orderModel.setMedecine_price(document.get("medecine_price").toString());
+////                                orderModel.setDriver_status(document.get("driver_status").toString());
+////                                orderModel.setUser_id(document.get("user_id").toString());
+////                                orderModel.setDriver_id(document.get("driver_id").toString());
+////                                orderModel.setStatus(document.get("status").toString());
+//
+//                                if(firebaseUser.getUid().equals(orderModel.getDriver_id())){
+//                                    mOrderModel.add(orderModel);
+//                                }
+//
+//                            }
+//                        }
+//                        if(mOrderModel.size() == 0){
+//                            iv_empty.setVisibility(View.VISIBLE);
+//                            rv_historylogs.setVisibility(View.GONE);
+//                            parent_layout.setBackgroundColor(Color.parseColor("#255265"));
+//
+//                        }else {
+//                            iv_empty.setVisibility(View.GONE);
+//                            rv_historylogs.setVisibility(View.VISIBLE);
+//                            parent_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+//                        }
+//
+//
+//                        HistoryLogsAdapter adapter = new HistoryLogsAdapter(getContext(), mOrderModel);
+//                        adapter.notifyDataSetChanged();
+//                        rv_historylogs.setAdapter(adapter);
+//
+//                    }
+//                });
+
         return  view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        functionMethod.callPermission(getActivity());
+        functionMethod.sendSMSPermission(getActivity());
     }
 }
