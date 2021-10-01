@@ -1,8 +1,11 @@
 package com.example.pharmagoenduser.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +69,7 @@ public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.
                                 if(document.getId().equals(orderModel.getPharmacy_id())){
                                     Log.d(TAG, "onComplete: on DB inside if");
                                     PharmacyModel pharmacyModel = document.toObject(PharmacyModel.class);
-                                    holder.tv_orderStatus.setText(orderModel.getStatus().toUpperCase());
+
                                     holder.tv_pharmaName.setText(pharmacyModel.getPharmacy_name());
                                     holder.tv_medName.setText("Order Id: " + orderModel.getMyOrder_id());
 
@@ -78,6 +81,24 @@ public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.
                                     }else {
                                         holder.tv_payment_method.setText("Paid");
 
+                                    }
+
+                                    if(orderModel.getDriver_status().equals("pending")){
+
+                                        if(orderModel.getStatus().equals("accepted")){
+                                            holder.tv_orderStatus.setText("Accepted By The Pharmacy");
+                                            holder.tv_orderStatus.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8);
+                                        }else {
+                                            holder.tv_orderStatus.setText(orderModel.getStatus().toUpperCase());
+                                        }
+
+                                    }else {
+                                        if(orderModel.getStatus().equals("done")){
+                                            holder.tv_orderStatus.setText(orderModel.getStatus().toUpperCase());
+                                        }else {
+                                            holder.tv_orderStatus.setText("Accepted By The driver");
+                                            holder.tv_orderStatus.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8);
+                                        }
                                     }
 
                                 }
@@ -96,9 +117,41 @@ public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.
                     OrderCanceledDialog dialog = new OrderCanceledDialog();
                     dialog.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "PharmaGo");
                 }else{
-                    Intent i = new Intent(mContext, ViewOrderActivity.class);
-                    i.putExtra("order_id", orderModel.getMyOrder_id());
-                    mContext.startActivity(i);
+                    if (orderModel.getDriver_id().isEmpty()){
+                        Intent i = new Intent(mContext, ViewOrderActivity.class);
+                        i.putExtra("order_id", orderModel.getMyOrder_id());
+                        mContext.startActivity(i);
+                    }else {
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
+                        builder1.setMessage("What do you want to do? ");
+                        builder1.setCancelable(true);
+
+                        builder1.setPositiveButton(
+                                "View Driver Profile",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                        ViewUserInfoDialog viewUserInfoDialog = new ViewUserInfoDialog(orderModel.getDriver_id());
+                                        viewUserInfoDialog.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "PharmaGo");
+                                    }
+                                });
+
+                        builder1.setNegativeButton(
+                                "View Order",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+
+                                        Intent i = new Intent(mContext, ViewOrderActivity.class);
+                                        i.putExtra("order_id", orderModel.getMyOrder_id());
+                                        mContext.startActivity(i);
+                                    }
+                                });
+
+                        AlertDialog alert11 = builder1.create();
+                        alert11.show();
+                    }
+
                 }
 
             }

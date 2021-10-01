@@ -1,13 +1,19 @@
 package com.example.pharmagoenduser.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,13 +21,19 @@ import com.example.pharmagoenduser.Model.CartModel;
 import com.example.pharmagoenduser.Model.OrderModel;
 import com.example.pharmagoenduser.Model.PharmacyModel;
 import com.example.pharmagoenduser.R;
+import com.example.pharmagoenduser.SignUp;
+import com.example.pharmagoenduser.View.Dialog.ViewUserInfoDialog;
+import com.example.pharmagoenduser.View.ViewOrderActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+
+import es.dmoral.toasty.Toasty;
 
 public class MyCartItemListAdapter extends RecyclerView.Adapter<MyCartItemListAdapter.ViewHolder>  {
     private Context mContext;
@@ -78,6 +90,49 @@ public class MyCartItemListAdapter extends RecyclerView.Adapter<MyCartItemListAd
 
 
 
+        holder.btn_cancelOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
+                builder1.setMessage("Are you sure to delete this item? ");
+                builder1.setCancelable(true);
+
+                builder1.setPositiveButton(
+                        "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                CartModel cartModel = mCartModel.get(position);
+                                db.collection(mContext.getString(R.string.COLLECTION_CART))
+                                        .document(cartModel.getCart_id())
+                                        .delete()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                Toasty.success(mContext,
+                                                        "Item successfully deleted.", Toast.LENGTH_LONG)
+                                                        .show();
+                                                dialog.cancel();
+                                            }
+                                        });
+                            }
+                        });
+
+                builder1.setNegativeButton(
+                        "cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+
+
+            }
+        });
 
 
 
@@ -95,6 +150,7 @@ public class MyCartItemListAdapter extends RecyclerView.Adapter<MyCartItemListAd
 
         ConstraintLayout parent_layout;
         TextView tv_pharmaName,tv_price,tv_medName,tv_quantity;
+        Button btn_cancelOrder;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -104,6 +160,7 @@ public class MyCartItemListAdapter extends RecyclerView.Adapter<MyCartItemListAd
             tv_medName = itemView.findViewById(R.id.tv_medName);
             parent_layout = itemView.findViewById(R.id.parent_layout);
             tv_quantity = itemView.findViewById(R.id.tv_quantity);
+            btn_cancelOrder = itemView.findViewById(R.id.btn_cancelOrder);
 
         }
     }

@@ -107,21 +107,6 @@
                 app:layout_constraintStart_toStartOf="@+id/tv_pharmaName"
                 app:layout_constraintTop_toTopOf="@+id/tv_medName" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_cancelOrder"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/shape_button_cancel"
-                android:fontFamily="@font/gothammedium"
-                android:text="X"
-                android:textSize="8sp"
-                android:visibility="visible"
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tv_price"
-                app:layout_constraintTop_toTopOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

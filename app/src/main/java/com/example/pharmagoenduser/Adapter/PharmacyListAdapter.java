@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,7 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pharmagoenduser.Model.PharmacyModel;
 import com.example.pharmagoenduser.R;
+import com.example.pharmagoenduser.View.Dialog.ViewPharmacyInfoDialog;
+import com.example.pharmagoenduser.View.Dialog.ViewUserInfoDialog;
 import com.example.pharmagoenduser.View.MedicineListActivity;
+import com.example.pharmagoenduser.View.ViewOrderActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -58,11 +62,36 @@ public class PharmacyListAdapter extends RecyclerView.Adapter<PharmacyListAdapte
         holder.cv_cotainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PharmacyModel pharmacyModel = mPharmacyModel.get(position);
-                Intent i = new Intent(mContext, MedicineListActivity.class);
-                i.putExtra("pharmacy_id", pharmacyModel.getPharmacy_id());
-                Log.d(TAG, "onClick: " + pharmacyModel.getPharmacy_id());
-                mContext.startActivity(i);
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
+                builder1.setMessage("What do you want to do? ");
+                builder1.setCancelable(true);
+
+                builder1.setPositiveButton(
+                        "View Pharmacy Profile",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                ViewPharmacyInfoDialog viewUserInfoDialog = new ViewPharmacyInfoDialog(pharmacyModel.getPharmacy_id());
+                                viewUserInfoDialog.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "PharmaGo");
+                            }
+                        });
+
+                builder1.setNegativeButton(
+                        "Order Medicine",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                PharmacyModel pharmacyModel = mPharmacyModel.get(position);
+                                Intent i = new Intent(mContext, MedicineListActivity.class);
+                                i.putExtra("pharmacy_id", pharmacyModel.getPharmacy_id());
+                                mContext.startActivity(i);
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+
             }
         });
 //        holder.btn_edit.setOnClickListener(new View.OnClickListener() {

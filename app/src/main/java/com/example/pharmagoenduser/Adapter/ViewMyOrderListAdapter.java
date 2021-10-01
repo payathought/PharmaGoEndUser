@@ -37,7 +37,7 @@ public class ViewMyOrderListAdapter extends RecyclerView.Adapter<ViewMyOrderList
     @NonNull
     @Override
     public ViewMyOrderListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_cart_item_list, parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_view_order_itemlist, parent,false);
         ViewMyOrderListAdapter.ViewHolder holder = new ViewMyOrderListAdapter.ViewHolder(view);
 
         return holder;
