@@ -1,5 +1,6 @@
 package com.example.pharmagoenduser.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -21,15 +22,20 @@ import com.example.pharmagoenduser.Adapter.ViewMyOrderListAdapter;
 import com.example.pharmagoenduser.Model.CartModel;
 import com.example.pharmagoenduser.Model.MyOrderItemsModel;
 import com.example.pharmagoenduser.Model.MyOrderModel;
+import com.example.pharmagoenduser.Model.PharmacyModel;
 import com.example.pharmagoenduser.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class ViewOrderActivity extends AppCompatActivity {
@@ -43,12 +49,13 @@ public class ViewOrderActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     FirebaseAuth mFirebaseAuth;
     FirebaseUser firebaseUser;
-    TextView tv_total,tv_payment_method;
+    TextView tv_total,tv_payment_method,tv_pharma_label,tv_subtotal,tv_vat;;
     CardView cv_total;
     ImageView iv_empty;
     ConstraintLayout parent_layout;
     int total= 0;
     int codTotal= 0;
+    double vat = 0.0;
     private static final String TAG = "ViewOrderActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +67,10 @@ public class ViewOrderActivity extends AppCompatActivity {
         tv_total = findViewById(R.id.tv_total);
         cv_total = findViewById(R.id.cv_total);
         tv_payment_method = findViewById(R.id.tv_payment_method);
+        tv_pharma_label = findViewById(R.id.tv_pharma_label);
+
+        tv_subtotal = findViewById(R.id.tv_subtotal);
+        tv_vat = findViewById(R.id.tv_vat);
 
         iv_empty = findViewById(R.id.iv_empty);
         parent_layout = findViewById(R.id.parent_layout);
@@ -85,6 +96,26 @@ public class ViewOrderActivity extends AppCompatActivity {
 
                             if(document.getId().equals(id)){
                                 MyOrderModel myOrderModel = document.toObject(MyOrderModel.class);
+
+                                db.collection(getString(R.string.COLLECTION_PHARMACYLIST))
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if(task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                            if(document.getId().equals(myOrderModel.getPharmacy_id())){
+                                                                PharmacyModel pharmacyModel = document.toObject(PharmacyModel.class);
+                                                                tv_pharma_label.setText(pharmacyModel.getPharmacy_name());
+                                                            }
+                                                        }
+
+
+                                                }
+
+
+                                            }
+                                        });
                                 Log.d(TAG, "payment: " + myOrderModel.getPayment_method());
                                 if(myOrderModel.getPayment_method().equals("cod")){
                                     tv_payment_method.setText(myOrderModel.getPayment_method().toUpperCase());
@@ -126,10 +157,15 @@ public class ViewOrderActivity extends AppCompatActivity {
                                 mMyOrderItemsModel.add(orderItems);
                                 codTotal += Integer.parseInt(orderItems.getMedecine_price());
                                 tv_total.setText("₱" + (codTotal+100));
-
+                                tv_subtotal.setText("₱" + codTotal);
                                 Log.d(TAG, "onEvent: " + codTotal);
 
                             }
+                            DecimalFormat dec = new DecimalFormat("#0.00");
+                            vat = (codTotal*.12);
+                            tv_vat.setText("₱" + dec.format(vat));
+                            tv_total.setText("₱" + dec.format(codTotal+100+vat));
+                            Log.d(TAG, "vat: " + vat);
 
                             if(mMyOrderItemsModel.size() == 0){
                                 cv_total.setVisibility(View.GONE);

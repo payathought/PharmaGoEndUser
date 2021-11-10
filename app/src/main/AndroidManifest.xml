@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pharmagoenduser">
+
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_icon_final"
@@ -12,7 +14,10 @@
         android:roundIcon="@mipmap/ic_icon_final"
         android:supportsRtl="true"
         android:theme="@style/Theme.PharmaGoEndUser">
-        <activity android:name=".View.ViewOrderActivity"></activity>
+        <activity android:name=".View.TermsAndPrivacyLandingPage"></activity>
+        <activity android:name=".View.TermsAndConditionActivity" />
+        <activity android:name=".View.TermsAndPrivacyActivity" />
+        <activity android:name=".View.ViewOrderActivity" />
         <activity android:name=".View.MyCartActivity" />
         <activity
             android:name=".View.SplashActivity"

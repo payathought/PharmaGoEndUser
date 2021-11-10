@@ -22,6 +22,7 @@ import com.example.pharmagoenduser.Model.CartModel;
 import com.example.pharmagoenduser.Model.MyOrderItemsModel;
 import com.example.pharmagoenduser.Model.MyOrderModel;
 import com.example.pharmagoenduser.Model.OrderModel;
+import com.example.pharmagoenduser.Model.SignUpModel;
 import com.example.pharmagoenduser.R;
 import com.example.pharmagoenduser.View.HomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +30,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -49,9 +51,13 @@ public class ProceedToCheckOutDialog extends AppCompatDialogFragment {
     EditText et_fn, et_ln, et_expiry,et_account_number;
     Button btn_cancel,btn_submit;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    TextView tv_rbRequired;
+    TextView tv_rbRequired,tv_name,tv_address;
     ArrayList<CartModel> mCartModel;
     MyOrderModel myOrderModel;
+
+    FirebaseAuth mFirebaseAuth;
+    FirebaseUser firebaseUser;
+
     private static final String TAG = "ProceedToOrderDialog";
     @NonNull
     @Override
@@ -71,7 +77,29 @@ public class ProceedToCheckOutDialog extends AppCompatDialogFragment {
         rb_card = view.findViewById(R.id.rb_card);
         rb_cod = view.findViewById(R.id.rb_cod);
         tv_rbRequired = view.findViewById(R.id.tv_rbRequired);
-        FirebaseAuth mFbAuth = FirebaseAuth.getInstance();
+        tv_name = view.findViewById(R.id.tv_name);
+        tv_address = view.findViewById(R.id.tv_address);
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = mFirebaseAuth.getCurrentUser();
+
+        db.collection(getString(R.string.COLLECTION_USER_INFORMATION))
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (SignUpModel model: queryDocumentSnapshots.toObjects(SignUpModel.class)) {
+                            if (model.getUser_id().equals(firebaseUser.getUid())){
+                                tv_name.setText(model.getFirstname() + " "+ model.getLastname());
+                                tv_address.setText(model.getAddress());
+                            }
+                        }
+
+                    }
+                });
+
+
+
         builder.setView(view);
         myOrderModel = new MyOrderModel();
         radio_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -118,6 +146,7 @@ public class ProceedToCheckOutDialog extends AppCompatDialogFragment {
                      myOrderModel.setUser_id(mCartModel.get(0).getUser_id());
                      myOrderModel.setMyOrder_id("");
                      myOrderModel.setStatus("pending");
+                     myOrderModel.setDateOrdered(null);
                     
                         
                          

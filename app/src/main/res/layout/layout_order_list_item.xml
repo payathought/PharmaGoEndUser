@@ -5,16 +5,17 @@
     android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="10sp"
-    android:paddingRight="10sp">
+    android:background="@color/main"
+    android:paddingLeft="5sp"
+    android:paddingTop="5sp"
+    android:paddingRight="5sp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
         android:elevation="15dp"
-        app:cardBackgroundColor="#47C6E9"
-        app:cardCornerRadius="30dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="10dp"
         app:cardElevation="10dp"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -31,10 +32,10 @@
                 android:id="@+id/tv_pharmaName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="124dp"
+                android:layout_marginEnd="16dp"
                 android:fontFamily="@font/gothambold"
-                android:gravity="center"
                 android:text="South Star Drug"
                 android:textColor="#013263"
                 android:textSize="20sp"
@@ -61,10 +62,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:fontFamily="@font/gothambold"
                 android:text="Tiki-tiki"
                 android:textColor="#013263"
-                android:textSize="10sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_pharmaName" />
 
@@ -72,30 +74,26 @@
                 android:id="@+id/tv_payment_method"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:fontFamily="@font/gothammedium"
                 android:text="COD"
                 android:textColor="#013263"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_medName"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/tv_orderStatus"
-                app:layout_constraintTop_toTopOf="@+id/tv_medName"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintStart_toStartOf="@+id/tv_medName"
+                app:layout_constraintTop_toBottomOf="@+id/tv_medName" />
 
             <TextView
                 android:id="@+id/tv_orderStatus"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
                 android:fontFamily="@font/gothammedium"
                 android:text="DONE"
                 android:textColor="#013263"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/tv_pharmaName"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="@+id/tv_payment_method"
+                app:layout_constraintTop_toBottomOf="@+id/tv_payment_method" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

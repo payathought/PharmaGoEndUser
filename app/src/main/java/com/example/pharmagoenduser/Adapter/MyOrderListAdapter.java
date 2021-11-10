@@ -30,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.ViewHolder>  {
@@ -71,33 +72,34 @@ public class MyOrderListAdapter extends RecyclerView.Adapter<MyOrderListAdapter.
                                     PharmacyModel pharmacyModel = document.toObject(PharmacyModel.class);
 
                                     holder.tv_pharmaName.setText(pharmacyModel.getPharmacy_name());
-                                    holder.tv_medName.setText("Order Id: " + orderModel.getMyOrder_id());
+                                    SimpleDateFormat formatter = new SimpleDateFormat("MMMM dd, yyyy");
+                                    holder.tv_medName.setText("Date Ordered: " + formatter.format(orderModel.getDateOrdered()));
 
 
 
                                     if(orderModel.getPayment_method().equals("cod")){
-                                        holder.tv_payment_method.setText("COD");
+                                        holder.tv_payment_method.setText("Payment Method: COD");
 
                                     }else {
-                                        holder.tv_payment_method.setText("Paid");
+                                        holder.tv_payment_method.setText("Payment Method: Credit/Debit (Paid)");
 
                                     }
 
                                     if(orderModel.getDriver_status().equals("pending")){
 
                                         if(orderModel.getStatus().equals("accepted")){
-                                            holder.tv_orderStatus.setText("Accepted By The Pharmacy");
-                                            holder.tv_orderStatus.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8);
+                                            holder.tv_orderStatus.setText("Order Status: Accepted By The Pharmacy");
+                                            holder.tv_orderStatus.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
                                         }else {
-                                            holder.tv_orderStatus.setText(orderModel.getStatus().toUpperCase());
+                                            holder.tv_orderStatus.setText("Order Status: " + orderModel.getStatus().toUpperCase());
                                         }
 
                                     }else {
                                         if(orderModel.getStatus().equals("done")){
-                                            holder.tv_orderStatus.setText(orderModel.getStatus().toUpperCase());
+                                            holder.tv_orderStatus.setText("Order Status: " + orderModel.getStatus().toUpperCase());
                                         }else {
-                                            holder.tv_orderStatus.setText("Accepted By The driver");
-                                            holder.tv_orderStatus.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8);
+                                            holder.tv_orderStatus.setText("Order Status:  Accepted By The driver");
+                                            holder.tv_orderStatus.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
                                         }
                                     }
 

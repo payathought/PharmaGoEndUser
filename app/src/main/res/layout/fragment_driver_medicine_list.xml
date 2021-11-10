@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EBECF0"
+    android:background="@color/main"
     tools:context=".View.MedicineListFragment"
-    android:id="@+id/parent_layout">
+    android:id="@+id/parent_layout"
+    >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -16,7 +17,9 @@
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:cardCornerRadius="0dp"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -88,6 +91,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
+        android:background="@color/main"
         tools:listitem="@layout/layout_driver_medecine_list_item" />
 
     <ImageView

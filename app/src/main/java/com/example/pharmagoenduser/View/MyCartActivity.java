@@ -1,5 +1,6 @@
 package com.example.pharmagoenduser.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -20,16 +21,21 @@ import com.example.pharmagoenduser.Adapter.MyCartItemListAdapter;
 import com.example.pharmagoenduser.Adapter.MyOrderListAdapter;
 import com.example.pharmagoenduser.Model.CartModel;
 import com.example.pharmagoenduser.Model.OrderModel;
+import com.example.pharmagoenduser.Model.PharmacyModel;
 import com.example.pharmagoenduser.R;
 import com.example.pharmagoenduser.View.Dialog.ProceedToCheckOutDialog;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class MyCartActivity extends AppCompatActivity {
@@ -41,10 +47,11 @@ public class MyCartActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     FirebaseAuth mFirebaseAuth;
     FirebaseUser firebaseUser;
-    TextView tv_total;
-    CardView cv_total,cv_proceed;
+    TextView tv_total,tv_pharma_label,tv_subtotal,tv_vat;
+    CardView cv_total,cv_proceed,cv_label;
     int total= 0;
     int codTotal= 0;
+    double vat = 0.0;
 
     Button btn_proceedToCheckout;
 
@@ -61,6 +68,10 @@ public class MyCartActivity extends AppCompatActivity {
         cv_total = findViewById(R.id.cv_total);
         cv_proceed = findViewById(R.id.cv_proceed);
         btn_proceedToCheckout = findViewById(R.id.btn_proceedToCheckout);
+        cv_label = findViewById(R.id.cv_label);
+        tv_pharma_label = findViewById(R.id.tv_pharma_label);
+        tv_subtotal = findViewById(R.id.tv_subtotal);
+        tv_vat = findViewById(R.id.tv_vat);
 
 
         rv_orderList.setHasFixedSize(true);
@@ -103,13 +114,22 @@ public class MyCartActivity extends AppCompatActivity {
                             Log.d(TAG, "onEvent: " + document.getId());
 //
                             if(firebaseUser.getUid().equals(cartModel.getUser_id())){
+
+
                                 mCartModel.add(cartModel);
                                 codTotal += Integer.parseInt(cartModel.getMedecine_price());
-                                tv_total.setText("₱" + (codTotal+100));
 
+
+
+                                tv_subtotal.setText("₱" + codTotal);
                                 Log.d(TAG, "onEvent: " + codTotal);
 
                             }
+                            DecimalFormat dec = new DecimalFormat("#0.00");
+                            vat = (codTotal*.12);
+                            tv_vat.setText("₱" + dec.format(vat));
+                            tv_total.setText("₱" + dec.format(codTotal+100+vat));
+                            Log.d(TAG, "vat: " + vat);
 
                             if(mCartModel.size() == 0){
                                 cv_total.setVisibility(View.GONE);
@@ -126,6 +146,7 @@ public class MyCartActivity extends AppCompatActivity {
                             cv_total.setVisibility(View.GONE);
                             cv_proceed.setVisibility(View.GONE);
                             btn_proceedToCheckout.setVisibility(View.GONE);
+                            cv_label.setVisibility(View.GONE);
                             parent_layout.setBackgroundColor(Color.parseColor("#255265"));
 
                         }else {
@@ -134,8 +155,37 @@ public class MyCartActivity extends AppCompatActivity {
                             cv_total.setVisibility(View.VISIBLE);
                             cv_proceed.setVisibility(View.VISIBLE);
                             btn_proceedToCheckout.setVisibility(View.VISIBLE);
+                            cv_label.setVisibility(View.VISIBLE);
 
                             parent_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                        }
+
+                        if (mCartModel != null){
+                            db.collection(getString(R.string.COLLECTION_PHARMACYLIST))
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if(task.isSuccessful()) {
+
+                                                if (mCartModel.size()>0){
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        if(document.getId().equals(mCartModel.get(0).getPharmacy_id())){
+
+                                                            PharmacyModel pharmacyModel = document.toObject(PharmacyModel.class);
+                                                            tv_pharma_label.setText(pharmacyModel.getPharmacy_name());
+
+
+
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+
+
+                                        }
+                                    });
                         }
 
                         MyCartItemListAdapter myCartItemListAdapter = new MyCartItemListAdapter(MyCartActivity.this, mCartModel);

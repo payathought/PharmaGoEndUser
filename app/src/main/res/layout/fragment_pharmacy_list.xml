@@ -2,17 +2,21 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EBECF0"
     tools:context=".View.PharmacyListFragment"
-    android:id="@+id/parent_layout">
+    android:background="@color/main"
+
+    >
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="@color/main"
         app:cardElevation="0dp"
+        app:cardCornerRadius="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -88,7 +92,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
-        tools:listitem="@layout/layout_pharmacy_list_item" />
+        tools:listitem="@layout/layout_pharmacy_list_item"
+        android:background="@color/main"/>
+
     <ImageView
         android:id="@+id/iv_empty"
         android:layout_width="0dp"
@@ -108,8 +114,8 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/gothambold"
         android:gravity="center"
-        android:text="There is no pharmacy \n in this list yet."
         android:lines="2"
+        android:text="There is no pharmacy \n in this list yet."
         android:textColor="@color/white"
         android:textSize="20sp"
         android:visibility="gone"
@@ -118,7 +124,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_empty"
         app:layout_constraintVertical_bias="0.0" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

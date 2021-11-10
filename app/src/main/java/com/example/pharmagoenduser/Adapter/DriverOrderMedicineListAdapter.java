@@ -34,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
@@ -79,17 +80,15 @@ public class DriverOrderMedicineListAdapter  extends RecyclerView.Adapter<Driver
                                 if(document.getId().equals(orderModel.getPharmacy_id())){
 
                                     PharmacyModel pharmacyModel = document.toObject(PharmacyModel.class);
-                                    holder.tv_medName.setText("Ordder Id: " + orderModel.getMyOrder_id());
-
-                                    holder.tv_driverStatus.setText(orderModel.getStatus());
                                     holder.tv_pharmaName.setText(pharmacyModel.getPharmacy_name());
-
+                                    SimpleDateFormat formatter = new SimpleDateFormat("MMMM dd, yyyy");
+                                    holder.tv_medName.setText("Date Ordered: " + formatter.format(orderModel.getDateOrdered()));
 
                                     if(orderModel.getPayment_method().equals("cod")){
-                                        holder.tv_payment_method.setText("COD");
+                                        holder.tv_payment_method.setText("Payment Method: COD");
 
                                     }else {
-                                        holder.tv_payment_method.setText("Paid");
+                                        holder.tv_payment_method.setText("Payment Method: Credit/Debit (Paid)");
 
                                     }
 

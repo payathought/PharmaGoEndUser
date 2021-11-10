@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.pharmagoenduser.FunctionAndMethod.FunctionMethod;
 import com.example.pharmagoenduser.MainActivity;
 import com.example.pharmagoenduser.R;
+import com.example.pharmagoenduser.View.Dialog.UpdateUserInfoDialog;
 import com.example.pharmagoenduser.View.Dialog.ViewUserInfoInToolBarDialog;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -129,6 +130,13 @@ public class DriverHomeActivity extends AppCompatActivity {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             firebaseAuth.signOut();
             Toasty.info(getApplicationContext(), "Logging Out", Toast.LENGTH_SHORT).show();
+        }else if(item.getItemId() == R.id.tnp){
+            startActivity(new Intent(this, TermsAndPrivacyLandingPage.class));
+        }
+
+        else{
+            UpdateUserInfoDialog dialog = new UpdateUserInfoDialog(firebaseUser.getUid(),this);
+            dialog.show(getSupportFragmentManager(), "PharmaGo");
         }
         return false;
     }

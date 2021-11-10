@@ -71,7 +71,9 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
-        tools:listitem="@layout/layout_order_list_item" />
+        tools:listitem="@layout/layout_order_list_item"
+        android:background="@color/main"
+        />
 
 
 

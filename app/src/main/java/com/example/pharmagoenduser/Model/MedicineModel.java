@@ -7,6 +7,27 @@ public class MedicineModel {
     private String pharmacy_id;
     private int medicine_quantity;
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    private String description;
+    private String category;
+
+
+
     public MedicineModel(String medecine_name, String medecine_price, String medicine_id) {
         this.medecine_name = medecine_name;
         this.medecine_price = medecine_price;

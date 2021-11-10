@@ -18,10 +18,12 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pharmagoenduser.Model.CartModel;
+import com.example.pharmagoenduser.Model.MedicineModel;
 import com.example.pharmagoenduser.Model.OrderModel;
 import com.example.pharmagoenduser.Model.PharmacyModel;
 import com.example.pharmagoenduser.R;
 import com.example.pharmagoenduser.SignUp;
+import com.example.pharmagoenduser.View.Dialog.OrderUpdateDialog;
 import com.example.pharmagoenduser.View.Dialog.ViewUserInfoDialog;
 import com.example.pharmagoenduser.View.ViewOrderActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -60,7 +62,7 @@ public class MyCartItemListAdapter extends RecyclerView.Adapter<MyCartItemListAd
 
         CartModel cartModel = mCartModel.get(position);
 
-        db.collection(mContext.getString(R.string.COLLECTION_PHARMACYLIST))
+        db.collection(mContext.getString(R.string.COLLECTION_MEDICINELIST))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -69,13 +71,14 @@ public class MyCartItemListAdapter extends RecyclerView.Adapter<MyCartItemListAd
 
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                if(document.getId().equals(cartModel.getPharmacy_id())){
+                                if(document.getId().equals(cartModel.getMedicine_id())){
                                     Log.d(TAG, "onComplete: on DB inside if");
-                                    PharmacyModel pharmacyModel = document.toObject(PharmacyModel.class);
-                                    holder.tv_medName.setText(cartModel.getMedecine_name());
+                                    MedicineModel medicineModel = document.toObject(MedicineModel.class);
+
+                                    holder.tv_medName.setText(medicineModel.getDescription());
                                     holder.tv_price.setText("₱"+cartModel.getMedecine_price());
 
-                                    holder.tv_pharmaName.setText(pharmacyModel.getPharmacy_name());
+                                    holder.tv_pharmaName.setText(medicineModel.getMedecine_name());
                                     holder.tv_quantity.setText(cartModel.getQuantity());
 
 
@@ -89,6 +92,13 @@ public class MyCartItemListAdapter extends RecyclerView.Adapter<MyCartItemListAd
                 });
 
 
+    holder.btn_update_order.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            OrderUpdateDialog dialog = new OrderUpdateDialog(mCartModel.get(position));
+            dialog.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "PharmaGo");
+        }
+    });
 
         holder.btn_cancelOrder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,7 +160,7 @@ public class MyCartItemListAdapter extends RecyclerView.Adapter<MyCartItemListAd
 
         ConstraintLayout parent_layout;
         TextView tv_pharmaName,tv_price,tv_medName,tv_quantity;
-        Button btn_cancelOrder;
+        Button btn_cancelOrder,btn_update_order;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -161,6 +171,7 @@ public class MyCartItemListAdapter extends RecyclerView.Adapter<MyCartItemListAd
             parent_layout = itemView.findViewById(R.id.parent_layout);
             tv_quantity = itemView.findViewById(R.id.tv_quantity);
             btn_cancelOrder = itemView.findViewById(R.id.btn_cancelOrder);
+            btn_update_order = itemView.findViewById(R.id.btn_update_order);
 
         }
     }

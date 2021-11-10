@@ -48,16 +48,19 @@ public class MedicineListAdapter extends RecyclerView.Adapter<MedicineListAdapte
         MedicineModel medicineModel = mMedecineModel.get(position);
         holder.tv_medecineName.setText(medicineModel.getMedecine_name());
         holder.tv_price.setText("₱"+medicineModel.getMedecine_price());
+        holder.tv_description.setText(medicineModel.getDescription());
+        holder.tv_category.setText(medicineModel.getCategory());
 
         holder.btn_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: Order");
                 MedicineModel medicineModel = mMedecineModel.get(position);
-                Intent i = new Intent(mContext, OrderMedicineActivity.class);
-                i.putExtra("medicine_id", medicineModel.getMedicine_id());
-                i.putExtra("pharmacy_id", medicineModel.getPharmacy_id());
-                mContext.startActivity(i);
+                Intent intent = new Intent(mContext, OrderMedicineActivity.class);
+                intent.putExtra("medicine_id", medicineModel.getMedicine_id());
+                intent.putExtra("pharmacy_id", medicineModel.getPharmacy_id());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
 
             }
         });
@@ -82,13 +85,15 @@ public class MedicineListAdapter extends RecyclerView.Adapter<MedicineListAdapte
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         ConstraintLayout parent_layout;
-        TextView tv_medecineName,tv_price;
+        TextView tv_medecineName,tv_price,tv_description,tv_category;
         Button btn_order;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_price = itemView.findViewById(R.id.tv_price);
             tv_medecineName = itemView.findViewById(R.id.tv_medecineName);
+            tv_description = itemView.findViewById(R.id.tv_description);
+            tv_category = itemView.findViewById(R.id.tv_category);
             parent_layout = itemView.findViewById(R.id.parent_layout);
             btn_order = itemView.findViewById(R.id.btn_order);
 

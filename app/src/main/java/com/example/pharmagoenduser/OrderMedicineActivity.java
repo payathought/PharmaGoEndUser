@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,8 +49,9 @@ import es.dmoral.toasty.Toasty;
 public class OrderMedicineActivity extends AppCompatActivity {
     private static final String TAG = "OrderMedicineActivity";
 
-    Button btn_minus, btn_plus,btn_addToCart;
-    TextView tv_medicineName,tv_medicinePrice,tv_quantity,txtUserToolbar,tv_pharma,tv_medQty;
+//    Button btn_minus, btn_plus,btn_addToCart;
+    Button btn_addToCart;
+    TextView tv_medicineName,tv_medicinePrice,tv_description,txtUserToolbar,tv_pharma,tv_medQty,tv_total;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     ProgressDialog progressDialog;
     Intent intent;
@@ -61,11 +63,12 @@ public class OrderMedicineActivity extends AppCompatActivity {
     Toolbar toolbar;
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
-
+    int getQty = 1;
     int medicine_quantity = 0;
 
     ArrayList<CartModel> mCartList;
 
+    EditText et_addqty;
 
     FirebaseUser fUser =  FirebaseAuth.getInstance().getCurrentUser();
     @Override
@@ -75,14 +78,17 @@ public class OrderMedicineActivity extends AppCompatActivity {
         intent = getIntent();
         id = intent.getStringExtra("medicine_id");
 
-        btn_minus = findViewById(R.id.btn_minus);
-        btn_plus = findViewById(R.id.btn_plus);
+//        btn_minus = findViewById(R.id.btn_minus);
+//        btn_plus = findViewById(R.id.btn_plus);
         btn_addToCart = findViewById(R.id.btn_addToCart);
         tv_medicineName = findViewById(R.id.tv_medicineName);
         tv_medicinePrice = findViewById(R.id.tv_medicinePrice);
-        tv_quantity = findViewById(R.id.tv_quantity);
+//        tv_quantity = findViewById(R.id.tv_quantity);
+        tv_description = findViewById(R.id.tv_description);
         tv_medQty = findViewById(R.id.tv_medQty);
         tv_pharma = findViewById(R.id.tv_pharma);
+        et_addqty = findViewById(R.id.et_addqty);
+        tv_total = findViewById(R.id.tv_total);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Signing Up");
@@ -109,6 +115,8 @@ public class OrderMedicineActivity extends AppCompatActivity {
             txtUserToolbar.setText(sharedpreferences.getAll().get(getString(R.string.USERNAME)).toString());
         }
 
+        et_addqty.setText(String.valueOf(getQty));
+        et_addqty.setSelection(et_addqty.getText().length());
 
         if(!id.equals("")){
 
@@ -146,12 +154,14 @@ public class OrderMedicineActivity extends AppCompatActivity {
                                         pharmacy_id = med.getPharmacy_id();
                                         price = Integer.parseInt(med.getMedecine_price());
                                         total = (price*quantity);
+                                        tv_total.setText("Total: ₱" + total);
                                         tv_medicineName.setText(med.getMedecine_name());
                                         tv_medicinePrice.setText("Price: ₱" + total);
-                                        tv_quantity.setText(String.valueOf(quantity));
+                                        Log.d(TAG, "onComplete: " + quantity);
+//                                        tv_quantity.setText(String.valueOf(quantity));
                                         medicine_quantity = med.getMedicine_quantity();
                                         tv_medQty.setText("QTY: " + medicine_quantity);
-
+                                        tv_description.setText(med.getDescription());
                                         db.collection(getString(R.string.COLLECTION_PHARMACYLIST))
                                                 .get()
                                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -182,115 +192,163 @@ public class OrderMedicineActivity extends AppCompatActivity {
                         }
                     });
         }
-        tv_quantity.addTextChangedListener(new TextWatcher() {
+
+        et_addqty.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(quantity == 1){
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
-                    btn_minus.setBackground(d);
-                    btn_minus.setEnabled(false);
 
-                }else {
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
-                    btn_minus.setBackground(d);
-                    btn_minus.setEnabled(true);
-                }
-                if(medicine_quantity == quantity){
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
-                    btn_plus.setBackground(d);
-                    btn_plus.setEnabled(false);
-
-                }else{
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
-                    btn_plus.setBackground(d);
-                    btn_plus.setEnabled(true);
-                }
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(quantity == 1){
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
-                    btn_minus.setBackground(d);
-                    btn_minus.setEnabled(false);
+                String enteredString = charSequence.toString();
+                if (enteredString.startsWith("0")) {
+                    Toast.makeText(OrderMedicineActivity.this,
+                            "You can't Enter Zero (0)",
+                            Toast.LENGTH_SHORT).show();
+                            et_addqty.setText("1");
 
-                }else {
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
-                    btn_minus.setBackground(d);
-                    btn_minus.setEnabled(true);
-                }
-                if(medicine_quantity == quantity){
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
-                    btn_plus.setBackground(d);
-                    btn_plus.setEnabled(false);
-
-                }else{
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
-                    btn_plus.setBackground(d);
-                    btn_plus.setEnabled(true);
                 }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(quantity == 1){
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
-                    btn_minus.setBackground(d);
-                    btn_minus.setEnabled(false);
 
-                }else {
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
-                    btn_minus.setBackground(d);
-                    btn_minus.setEnabled(true);
-                }
-                if(medicine_quantity == quantity){
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
-                    btn_plus.setBackground(d);
-                    btn_plus.setEnabled(false);
 
+                if (!et_addqty.getText().toString().equals("")){
+                     getQty = Integer.parseInt( et_addqty.getText().toString());
+                    total = (getQty*price);
+                    tv_total.setText("Total: ₱" + total);
+                    if(getQty <= medicine_quantity){
+                        Drawable d = getResources().getDrawable(R.drawable.shape_button_create_account);
+                        btn_addToCart.setBackground(d);
+                        btn_addToCart.setEnabled(true);
+
+                    }
+                    else{
+                        Drawable d = getResources().getDrawable(R.drawable.shape_button_create_account_disable);
+                        btn_addToCart.setBackground(d);
+                        btn_addToCart.setEnabled(false);
+                    }
                 }else{
-                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
-                    btn_plus.setBackground(d);
-                    btn_plus.setEnabled(true);
+
+                    Drawable d = getResources().getDrawable(R.drawable.shape_button_create_account_disable);
+                    btn_addToCart.setBackground(d);
+                    btn_addToCart.setEnabled(false);
+                    tv_total.setText("Total: ₱0");
                 }
+
             }
         });
+//        tv_quantity.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                if(quantity == 1){
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
+//                    btn_minus.setBackground(d);
+//                    btn_minus.setEnabled(false);
+//
+//                }else {
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
+//                    btn_minus.setBackground(d);
+//                    btn_minus.setEnabled(true);
+//                }
+//                if(medicine_quantity == quantity){
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
+//                    btn_plus.setBackground(d);
+//                    btn_plus.setEnabled(false);
+//
+//                }else{
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
+//                    btn_plus.setBackground(d);
+//                    btn_plus.setEnabled(true);
+//                }
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                if(quantity == 1){
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
+//                    btn_minus.setBackground(d);
+//                    btn_minus.setEnabled(false);
+//
+//                }else {
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
+//                    btn_minus.setBackground(d);
+//                    btn_minus.setEnabled(true);
+//                }
+//                if(medicine_quantity == quantity){
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
+//                    btn_plus.setBackground(d);
+//                    btn_plus.setEnabled(false);
+//
+//                }else{
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
+//                    btn_plus.setBackground(d);
+//                    btn_plus.setEnabled(true);
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//                if(quantity == 1){
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
+//                    btn_minus.setBackground(d);
+//                    btn_minus.setEnabled(false);
+//
+//                }else {
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
+//                    btn_minus.setBackground(d);
+//                    btn_minus.setEnabled(true);
+//                }
+//                if(medicine_quantity == quantity){
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
+//                    btn_plus.setBackground(d);
+//                    btn_plus.setEnabled(false);
+//
+//                }else{
+//                    Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
+//                    btn_plus.setBackground(d);
+//                    btn_plus.setEnabled(true);
+//                }
+//            }
+//        });
 
         if(quantity == 1){
             Drawable d = getResources().getDrawable(R.drawable.shape_button_order_disable);
-            btn_minus.setBackground(d);
-            btn_minus.setEnabled(false);
+//            btn_minus.setBackground(d);
+//            btn_minus.setEnabled(false);
 
         }else if(quantity >= 1){
             Drawable d = getResources().getDrawable(R.drawable.shape_button_order);
-            btn_minus.setBackground(d);
-            btn_minus.setEnabled(true);
+//            btn_minus.setBackground(d);
+//            btn_minus.setEnabled(true);
         }
 
 
 
-
-        btn_plus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                quantity++;
-                total = (price*quantity);
-                tv_medicinePrice.setText("Price: ₱" + total);
-                tv_quantity.setText(String.valueOf(quantity));
-                Log.d(TAG, "onClick: " + quantity);
-
-            }
-        });
-        btn_minus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                quantity--;
-                total = (price*quantity);
-                tv_medicinePrice.setText("Price: ₱" + total);
-                tv_quantity.setText(String.valueOf(quantity));
-
-            }
-        });
+//
+//        btn_plus.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                quantity++;
+//                total = (price*quantity);
+//                tv_medicinePrice.setText("Price: ₱" + total);
+//                tv_quantity.setText(String.valueOf(quantity));
+//                Log.d(TAG, "onClick: " + quantity);
+//
+//            }
+//        });
+//        btn_minus.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                quantity--;
+//                total = (price*quantity);
+//                tv_medicinePrice.setText("Price: ₱" + total);
+//                tv_quantity.setText(String.valueOf(quantity));
+//
+//            }
+//        });
 //        btn_addOrder.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -377,7 +435,7 @@ public class OrderMedicineActivity extends AppCompatActivity {
                         cartModel.setUser_id(fUser.getUid());
                         cartModel.setMedicine_id(id);
                         cartModel.setPharmacy_id(pharmacy_id);
-                        cartModel.setQuantity(String.valueOf(quantity));
+                        cartModel.setQuantity(String.valueOf(getQty));
                         db.collection(getString(R.string.COLLECTION_CART))
                                 .add(cartModel)
                                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -426,7 +484,7 @@ public class OrderMedicineActivity extends AppCompatActivity {
                                         cartModel.setUser_id(fUser.getUid());
                                         cartModel.setMedicine_id(id);
                                         cartModel.setPharmacy_id(pharmacy_id);
-                                        cartModel.setQuantity(String.valueOf(quantity));
+                                        cartModel.setQuantity(String.valueOf(getQty));
                                         db.collection(getString(R.string.COLLECTION_CART))
                                                 .add(cartModel)
                                                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -473,7 +531,7 @@ public class OrderMedicineActivity extends AppCompatActivity {
                     cartModel.setUser_id(fUser.getUid());
                     cartModel.setMedicine_id(id);
                     cartModel.setPharmacy_id(pharmacy_id);
-                    cartModel.setQuantity(String.valueOf(quantity));
+                    cartModel.setQuantity(String.valueOf(getQty));
                     db.collection(getString(R.string.COLLECTION_CART))
                             .add(cartModel)
                             .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
